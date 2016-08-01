@@ -12,28 +12,8 @@ environment:
     # Note: Because we have to separate the py2 and py3 components due to compiler version, we have a race condition for non-python packages.
     # Not sure how to resolve this, but maybe we should be tracking the VS version in the build string anyway?
     - TARGET_ARCH: "x86"
-      CONDA_PY: "27"
-      PY_CONDITION: "python >=2.7,<3"
-      CONDA_INSTALL_LOCN: "C:\\Miniconda"
-    - TARGET_ARCH: "x86"
-      CONDA_PY: "34"
-      PY_CONDITION: "python >=3.4,<3.5"
-      CONDA_INSTALL_LOCN: "C:\\Miniconda3"
-    - TARGET_ARCH: "x86"
-      CONDA_PY: "35"
-      PY_CONDITION: "python >=3.5"
       CONDA_INSTALL_LOCN: "C:\\Miniconda35"
     - TARGET_ARCH: "x64"
-      CONDA_PY: "27"
-      PY_CONDITION: "python >=2.7,<3"
-      CONDA_INSTALL_LOCN: "C:\\Miniconda-x64"
-    - TARGET_ARCH: "x64"
-      CONDA_PY: "34"
-      PY_CONDITION: "python >=3.4,<3.5"
-      CONDA_INSTALL_LOCN: "C:\\Miniconda3-x64"
-    - TARGET_ARCH: "x64"
-      CONDA_PY: "35"
-      PY_CONDITION: "python >=3.5"
       CONDA_INSTALL_LOCN: "C:\\Miniconda35-x64"
 
 artifacts:
@@ -49,7 +29,7 @@ install:
     # We don't need to build the example recipe.
     - cmd: rmdir recipes\example /s /q
     # Skip if we are not in a PR.
-    - cmd: if not defined APPVEYOR_PULL_REQUEST_NUMBER rmdir /q /s recipes
+    #- cmd: if not defined APPVEYOR_PULL_REQUEST_NUMBER rmdir /q /s recipes
     # Make sure the `recipes` directory exists if we removed it.
     - cmd: if not exist recipes mkdir recipes
 
@@ -58,10 +38,10 @@ install:
     # purpose but it is problematic because it tends to cancel builds pushed
     # directly to master instead of just PR builds (or the converse).
     # credits: JuliaLang developers.
-    - ps: if ($env:APPVEYOR_PULL_REQUEST_NUMBER -and $env:APPVEYOR_BUILD_NUMBER -ne ((Invoke-RestMethod `
-        https://ci.appveyor.com/api/projects/$env:APPVEYOR_ACCOUNT_NAME/$env:APPVEYOR_PROJECT_SLUG/history?recordsNumber=50).builds | `
-        Where-Object pullRequestId -eq $env:APPVEYOR_PULL_REQUEST_NUMBER)[0].buildNumber) { `
-          throw "There are newer queued builds for this pull request, failing early." }
+    #- ps: if ($env:APPVEYOR_PULL_REQUEST_NUMBER -and $env:APPVEYOR_BUILD_NUMBER -ne ((Invoke-RestMethod `
+    #    https://ci.appveyor.com/api/projects/$env:APPVEYOR_ACCOUNT_NAME/$env:APPVEYOR_PROJECT_SLUG/history?recordsNumber=50).builds | `
+    #    Where-Object pullRequestId -eq $env:APPVEYOR_PULL_REQUEST_NUMBER)[0].buildNumber) { `
+    #      throw "There are newer queued builds for this pull request, failing early." }
 
     # Set the CONDA_NPY, although it has no impact on the actual build. We need this because of a test within conda-build.
     - cmd: set CONDA_NPY=19
