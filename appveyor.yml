@@ -1,5 +1,12 @@
 environment:
 
+  pwd_conda:
+    secure: cgiPKmQKzGM0S7tgp1DQJA==
+  login_conda:
+    secure: Rx7nGwJOWL7SMqIQEdKduA==
+
+  conda_token:
+    secure: JHoNjSJ/qEnmDBxTUrryRM/hu5ajQSboycQysdUjVnX8ta/vgvc8ihEnn2zmhPWy
   # SDK v7.0 MSVC Express 2008's SetEnv.cmd script will fail if the
   # /E:ON and /V:ON options are not enabled in the batch script interpreter
   # See: http://stackoverflow.com/a/13751649/163740
@@ -64,18 +71,31 @@ install:
     - cmd: conda config --add channels conda-forge
     - cmd: conda config --set show_channel_urls true
     - cmd: conda update --yes --quiet conda
+    - cmd: conda install --yes --quiet conda-build
+    - cmd: conda install --yes --quiet anaconda-client
 
-    - cmd: conda install --yes --quiet obvious-ci conda-build-all
-    - cmd: conda install --yes --quiet conda-forge-build-setup
-    - cmd: run_conda_forge_build_setup
+
+build_script:
+  - cmd: conda build --token %conda_token% recipes/ibexlib --
+  # - cmd: ls recipes
+  # - cmd: ls .
+  # - cmd: conda install --use-local recipes/ibex-lib
+
+# on_success:
+  # - cmd: anaconda login --username %login_conda% --password %pwd_conda%
+  # - cmd: anaconda upload 'C:\Miniconda35\conda-bld\**\*.tar.bz2'
+  # - cmd: anaconda logout
+    # - cmd: conda install --yes --quiet obvious-ci conda-build-all
+    # - cmd: conda install --yes --quiet conda-forge-build-setup
+    # - cmd: run_conda_forge_build_setup
 
 # Skip .NET project specific build phase.
-build: off
+# build: off
 
-test_script:
-    - '%CMD_IN_ENV% conda-build-all recipes --matrix-conditions "numpy >=1.10" "%PY_CONDITION%"'
+# test_script:
+    # - '%CMD_IN_ENV% conda-build-all recipes --matrix-conditions "numpy >=1.10" "%PY_CONDITION%"'
     # copy any newly created conda packages into the conda_packages dir
-    - cmd: mkdir conda_packages
+    # - cmd: mkdir conda_packages
     # Uncomment the following two lines to make any conda packages created
     # available as build artifacts in AppVeyor
     #- cmd: 'copy /Y C:\Miniconda\conda-bld\win-32\*.bz2 conda_packages || cmd /c "exit /b 0"'
