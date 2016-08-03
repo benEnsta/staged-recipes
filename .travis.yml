@@ -1,7 +1,15 @@
 # The language in this case has no bearing - we are going to be making use of conda.
-language: objective-c
-
+language: c++
 sudo: false
+
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    - deadsnakes
+    packages:
+    - g++-4.8
+
 
 env:
   global:
@@ -14,8 +22,10 @@ matrix:
       env: ACTION="build-all"
     - os: linux
       env: ACTION="create-feedstocks-on-merge"
+      compiler: gcc-4.8
 
 script:
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then export CXX=g++-4.8 CC=gcc-4.8; fi
   - if [ "$ACTION" = "create-feedstocks-on-merge" ]; then
       echo "Creating feedstocks from the recipe(s) (this simply lints the recipe if this isn't a merged commit to master).";
       source ./.CI/create_feedstocks;
