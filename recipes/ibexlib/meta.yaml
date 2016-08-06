@@ -9,10 +9,10 @@ source:
 #s    version: {{ environ['GIT_DESCRIBE_TAG'] }}
 
 build:
-  script_env:
-    - CC
-    - CXX
-  number: 1
+  # script_env:
+  #   - CC
+  #   - CXX
+  number: 3
 
 requirements:
     build:

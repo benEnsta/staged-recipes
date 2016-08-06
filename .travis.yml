@@ -19,6 +19,7 @@ env:
 matrix:
   include:
     - os: osx
+      compiler: clang
       env: ACTION="build-all"
     - os: linux
       env: ACTION="create-feedstocks-on-merge"
@@ -26,6 +27,7 @@ matrix:
 
 script:
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then export CXX=g++-4.8 CC=gcc-4.8; fi
+  # - export CXXFLAGS="${CXXFLAGS} -fvisibility=hidden"
   - if [ "$ACTION" = "create-feedstocks-on-merge" ]; then
       echo "Creating feedstocks from the recipe(s) (this simply lints the recipe if this isn't a merged commit to master).";
       source ./.CI/create_feedstocks;
